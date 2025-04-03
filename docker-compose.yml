@@ -1,6 +1,6 @@
 services:
   comfyui-worker:
-    image:  loganoneal/runpod-worker-comfy:dev-sdxl
+    image:  loganoneal/runpod-worker-comfy:sdxl-consistent-characters
     deploy:
       resources:
         reservations:
