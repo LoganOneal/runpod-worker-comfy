@@ -36,7 +36,7 @@ WORKDIR /comfyui
 RUN pip install runpod requests
 
 # install huggingface hub 
-RUN pip install --upgrade huggingface_hub==0.26.0
+RUN pip install --upgrade huggingface_hub==0.30.1
 
 # Support for the network volume
 ADD src/extra_model_paths.yaml ./
@@ -89,16 +89,20 @@ RUN if [ "$MODEL_TYPE" = "sdxl" ]; then \
       wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O models/vae/ae.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors; \
     elif [ "$MODEL_TYPE" = "sdxl-consistent-characters" ]; then \
       mkdir -p models/upscale_models && \
+      mkdir -p models/controlnet && \
       echo "Downloading juggernautXL model..." && \
       wget --progress=dot:giga -O models/checkpoints/juggernautXL_juggXIByRundiffusion.safetensors "https://civitai.com/api/download/models/782002?type=Model&format=SafeTensor&size=full&fp=fp16" && \
       echo "Downloading photon_v1 model..." && \
       wget --progress=dot:giga -O models/checkpoints/photon_v1.safetensors "https://civitai.com/api/download/models/90072?type=Model&format=SafeTensor&size=pruned&fp=fp16" && \
       echo "Downloading ClearRealityV1 model..." && \
       wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" --progress=dot:giga -O models/upscale_models/4x-ClearRealityV1.pth "https://huggingface.co/skbhadra/ClearRealityV1/resolve/main/4x-ClearRealityV1.pth" && \
+      echo "Downloading ControlNet++ models..." && \
+      wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" --progress=dot:giga -O models/controlnet/controlNet-Union-SDXL.safetensors "https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors" && \
       echo "Checking downloaded file sizes:" && \
       du -h models/checkpoints/juggernautXL_juggXIByRundiffusion.safetensors && \
       du -h models/checkpoints/photon_v1.safetensors && \
-      du -h models/upscale_models/4x-ClearRealityV1.pth; \
+      du -h models/upscale_models/4x-ClearRealityV1.pth && \
+      du -h models/controlnet/controlNet-Union-SDXL.safetensors; \
     fi
 
 # Stage 3: Final image
