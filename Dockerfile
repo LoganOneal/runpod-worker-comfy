@@ -27,7 +27,7 @@ RUN apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 RUN pip install comfy-cli
 
 # Install ComfyUI
-RUN /usr/bin/yes | comfy --workspace /comfyui install --cuda-version 11.8 --nvidia --version 0.3.26
+RUN /usr/bin/yes | comfy --workspace /comfyui install --cuda-version 11.8 --nvidia --version 0.3.27
 
 # Change working directory to ComfyUI
 WORKDIR /comfyui
@@ -50,10 +50,10 @@ ADD src/restore_snapshot.sh ./
 RUN chmod +x /start.sh /restore_snapshot.sh
 
 # Optionally copy the snapshot file
-#ADD *snapshot*.json /
+ADD *snapshot*.json /
 
 # Restore the snapshot to install custom nodes
-#UN /restore_snapshot.sh
+RUN /restore_snapshot.sh
 
 # Start container
 CMD ["/start.sh"]
@@ -63,6 +63,9 @@ FROM base as downloader
 
 ARG HUGGINGFACE_ACCESS_TOKEN 
 ARG MODEL_TYPE
+
+# set model type to sdxl
+ENV MODEL_TYPE=sdxl
 
 # Change working directory to ComfyUI
 WORKDIR /comfyui
